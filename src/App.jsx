@@ -10,12 +10,15 @@ import Modal from "./components/Modal";
 import AddAndUpdateContact from "./components/AddAndUpdateContact";
 import useDisclouse from "./hooks/useDisclouse";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const App = () => {
   const [contacts, setContacts] = useState([]);
   const { isOpen, onClose, onOpen } = useDisclouse();
 
   useEffect(() => {
-    async function getContacts() {
+    const getContacts = async () => {
       try {
         const contactsRef = collection(db, "contacts");
 
@@ -32,10 +35,32 @@ const App = () => {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
 
     getContacts();
   }, []);
+
+  const filterContacts = (e) => {
+    const value = e.target.value;
+    const contactsRef = collection(db, "contacts");
+
+    onSnapshot(contactsRef, (snapshot) => {
+      const contactLists = snapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
+
+      const filteredContacts = contactLists.filter((contact) =>
+        contact.name.toLowerCase().includes(value.toLowerCase())
+      );
+
+      setContacts(filteredContacts);
+
+      return filteredContacts;
+    });
+  };
 
   return (
     <>
@@ -45,6 +70,7 @@ const App = () => {
           <div className="flex items-center relative flex-grow">
             <FiSearch className="text-3xl text-white absolute ml-1" />
             <input
+              onChange={filterContacts}
               type="text"
               className="border-white bg-transparent h-10 rounded-md border flex-grow text-white pl-9"
             />
@@ -61,6 +87,7 @@ const App = () => {
         </div>
       </div>
       <AddAndUpdateContact onClose={onClose} isOpen={isOpen} />
+      <ToastContainer position="bottom-center" />
     </>
   );
 };
