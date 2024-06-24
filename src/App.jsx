@@ -7,6 +7,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "./config/firebase";
 import ContactCard from "./components/ContactCard";
 import Modal from "./components/Modal";
+import AddAndUpdateContact from "./components/AddAndUpdateContact";
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
@@ -62,10 +63,7 @@ const App = () => {
           ))}
         </div>
       </div>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        Modal
-      </Modal>
+      <AddAndUpdateContact onClose={onClose} isOpen={isOpen} />
     </>
   );
 };
