@@ -6,9 +6,19 @@ import { useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./config/firebase";
 import ContactCard from "./components/ContactCard";
+import Modal from "./components/Modal";
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
+  const [isOpen, isSetOpen] = useState(false);
+
+  function onOpen() {
+    isSetOpen(true);
+  }
+
+  function onClose() {
+    isSetOpen(false);
+  }
 
   useEffect(() => {
     async function getContacts() {
@@ -30,24 +40,33 @@ const App = () => {
   }, []);
 
   return (
-    <div className="max-w-[370px] mx-auto px-4">
-      <Navbar />
-      <div className="flex items-center gap-2 mt-4">
-        <div className="flex items-center relative flex-grow">
-          <FiSearch className="text-3xl text-white absolute ml-1" />
-          <input
-            type="text"
-            className="border-white bg-transparent h-10 rounded-md border flex-grow text-white pl-9"
+    <>
+      <div className="max-w-[370px] mx-auto px-4">
+        <Navbar />
+        <div className="flex items-center gap-2 mt-4">
+          <div className="flex items-center relative flex-grow">
+            <FiSearch className="text-3xl text-white absolute ml-1" />
+            <input
+              type="text"
+              className="border-white bg-transparent h-10 rounded-md border flex-grow text-white pl-9"
+            />
+          </div>
+          <AiFillPlusCircle
+            onClick={onOpen}
+            className="text-5xl text-white cursor-pointer"
           />
         </div>
-        <AiFillPlusCircle className="text-5xl text-white cursor-pointer" />
+        <div className="mt-4 gap-4 flex flex-col ">
+          {contacts.map((contact) => (
+            <ContactCard key={contact.id} contact={contact} />
+          ))}
+        </div>
       </div>
-      <div className="mt-4">
-        {contacts.map((contact) => (
-          <ContactCard key={contact.id} contact={contact} />
-        ))}
-      </div>
-    </div>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        Modal
+      </Modal>
+    </>
   );
 };
 
