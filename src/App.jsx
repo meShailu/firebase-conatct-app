@@ -12,6 +12,7 @@ import useDisclouse from "./hooks/useDisclouse";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NotFoundContact from "./components/NotFoundContact";
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
@@ -81,9 +82,14 @@ const App = () => {
           />
         </div>
         <div className="mt-4 gap-4 flex flex-col ">
-          {contacts.map((contact) => (
-            <ContactCard key={contact.id} contact={contact} />
-          ))}
+          {console.log(contacts)}
+          {contacts.length <= 0 ? (
+            <NotFoundContact />
+          ) : (
+            contacts.map((contact) => (
+              <ContactCard key={contact.id} contact={contact} />
+            ))
+          )}
         </div>
       </div>
       <AddAndUpdateContact onClose={onClose} isOpen={isOpen} />
