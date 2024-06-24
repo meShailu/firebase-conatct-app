@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import { FiSearch } from "react-icons/fi";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "./config/firebase";
 import ContactCard from "./components/ContactCard";
 import Modal from "./components/Modal";
@@ -18,18 +18,22 @@ const App = () => {
     async function getContacts() {
       try {
         const contactsRef = collection(db, "contacts");
-        const contactSnapShot = await getDocs(contactsRef);
-        const contactLists = contactSnapShot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
+
+        onSnapshot(contactsRef, (snapshot) => {
+          const contactLists = snapshot.docs.map((doc) => {
+            return {
+              id: doc.id,
+              ...doc.data(),
+            };
+          });
+          setContacts(contactLists);
+          return contactLists;
         });
-        setContacts(contactLists);
       } catch (error) {
         console.log(error);
       }
     }
+
     getContacts();
   }, []);
 
